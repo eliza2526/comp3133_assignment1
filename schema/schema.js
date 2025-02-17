@@ -7,6 +7,7 @@ const schema = buildSchema(`
         email: String
         password: String
         created: String
+        updatedAt: String
     }
 
     type Employee {
@@ -17,9 +18,10 @@ const schema = buildSchema(`
         gender: String
         city: String
         designation: String
+        department: String
         salary: Float
         created: String
-        updatedat: String
+        updatedAt: String
     }
 
     type Query {
@@ -27,21 +29,25 @@ const schema = buildSchema(`
         users: [User]
         employee(id: ID!): Employee
         employees: [Employee]
+        employeesByDesignation(designation: String!): [Employee]
+        employeesByDepartment(department: String!): [Employee]
+        login(username: String!, password: String!): User
     }
 
     type Mutation {
         addUser(username: String, email: String, password: String): User
-        loginUser(username: String, password: String): User
+        signup(username: String!, email: String!, password: String!): User
         addEmployee(
-            firstname: String,
-            lastname: String,
-            email: String,
-            gender: String,
-            city: String,
-            designation: String,
-            salary: Float,
+            firstname: String!,
+            lastname: String!,
+            email: String!,
+            gender: String!,
+            city: String!,
+            designation: String!,
+            department: String!,
+            salary: Float!,
             created: String,
-            updatedat: String
+            updatedAt: String
         ): Employee
         updateEmployee(
             id: ID!,
@@ -51,9 +57,10 @@ const schema = buildSchema(`
             gender: String,
             city: String,
             designation: String,
+            department: String,
             salary: Float,
             created: String,
-            updatedat: String
+            updatedAt: String
         ): Employee
         deleteEmployee(id: ID!): String
     }

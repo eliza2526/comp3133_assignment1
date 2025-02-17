@@ -11,6 +11,9 @@ mongoose.connect('mongodb+srv://elizabeththomas2:mgQmgLF5xvKIfBvk@cluster0.u4oyz
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
 });
+mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error:', err);
+});
 
 // GraphQL Endpoint
 app.use('/graphql', graphqlHTTP({

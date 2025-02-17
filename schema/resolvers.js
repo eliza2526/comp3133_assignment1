@@ -17,20 +17,20 @@ const root = {
             throw new Error('Error fetching users');
         }
     },
-    addUser: async (args) => {
-        const hashedPassword = await bcrypt.hash(args.password, 10);
+    signup: async ({ username, email, password }) => {
+        const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({
-            username: args.username,
-            email: args.email,
+            username,
+            email,
             password: hashedPassword
         });
         try {
             return await user.save();
         } catch (err) {
-            throw new Error('Error adding user');
+            throw new Error('Error signing up user: ' + err.message);
         }
     },
-    loginUser: async ({ username, password }) => {
+    login: async ({ username, password }) => {
         try {
             const user = await User.findOne({ username });
             if (!user) {
@@ -42,7 +42,7 @@ const root = {
             }
             return user;
         } catch (err) {
-            throw new Error('Login failed');
+            throw new Error('Login failed: ' + err.message);
         }
     },
     employee: async ({ id }) => {
@@ -59,6 +59,20 @@ const root = {
             throw new Error('Error fetching employees');
         }
     },
+    employeesByDesignation: async ({ designation }) => {
+        try {
+            return await Employee.find({ designation });
+        } catch (err) {
+            throw new Error('Error fetching employees by designation');
+        }
+    },
+    employeesByDepartment: async ({ department }) => {
+        try {
+            return await Employee.find({ department });
+        } catch (err) {
+            throw new Error('Error fetching employees by department');
+        }
+    },
     addEmployee: async (args) => {
         const employee = new Employee({
             firstname: args.firstname,
@@ -67,29 +81,30 @@ const root = {
             gender: args.gender,
             city: args.city,
             designation: args.designation,
+            department: args.department,
             salary: args.salary,
             created: args.created,
-            updatedat: args.updatedat
+            updatedAt: args.updatedAt
         });
         try {
             return await employee.save();
         } catch (err) {
-            throw new Error('Error adding employee');
+            throw new Error('Error adding employee: ' + err.message);
         }
     },
     updateEmployee: async ({ id, ...args }) => {
         try {
             return await Employee.findByIdAndUpdate(id, { $set: args }, { new: true });
         } catch (err) {
-            throw new Error('Error updating employee');
+            throw new Error('Error updating employee: ' + err.message);
         }
     },
     deleteEmployee: async ({ id }) => {
         try {
-            await Employee.findByIdAndRemove(id);
+            await Employee.findByIdAndDelete(id);
             return 'Employee deleted successfully';
         } catch (err) {
-            throw new Error('Error deleting employee');
+            throw new Error('Error deleting employee: ' + err.message);
         }
     }
 };
